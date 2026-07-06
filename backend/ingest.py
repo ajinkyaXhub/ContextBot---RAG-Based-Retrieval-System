@@ -3,16 +3,27 @@ import re
 import PyPDF2
 import docx
 import chromadb
-from sentence_transformers import SentenceTransformer
 import pytesseract
 from pdf2image import convert_from_path
+from huggingface_hub import InferenceClient
+import os
+from dotenv import load_dotenv
+load_dotenv()
 
 pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
 POPPLER_PATH = r"C:\poppler\poppler-26.02.0\Library\bin"
 
 # ── Load the embedding model ──────────────────────────────────────────────────
-model = SentenceTransformer('all-MiniLM-L6-v2')
 
+HF_API_KEY = os.environ.get("HF_API_KEY",)
+hf_client = InferenceClient(token=HF_API_KEY)
+
+def get_embeddings(texts):
+    result = hf_client.feature_extraction(
+        texts,
+        model="sentence-transformers/all-MiniLM-L6-v2"
+    )
+    return result.tolist()
 # ── Connect to ChromaDB ───────────────────────────────────────────────────────
 client = chromadb.PersistentClient(path="./chroma_db")
 
@@ -104,7 +115,7 @@ def ingest_document(file_path):
     chunks = split_into_chunks(text)
     print(f"  → {len(chunks)} chunks created")
 
-    embeddings = model.encode(chunks).tolist()
+    embeddings = get_embeddings(chunks)
     print(f"  → Embeddings generated")
 
     ids = [f"{filename}_chunk_{i}" for i in range(len(chunks))]

@@ -1,10 +1,22 @@
 import chromadb
-from sentence_transformers import SentenceTransformer
 from groq import Groq
 import os
+from huggingface_hub import InferenceClient
+import os
+from dotenv import load_dotenv
+load_dotenv()
 
 # ── Load the same embedding model ─────────────────────────────────────────────
-model = SentenceTransformer('all-MiniLM-L6-v2')
+
+HF_API_KEY = os.environ.get("HF_API_KEY")
+hf_client = InferenceClient(token=HF_API_KEY)
+
+def get_embeddings(texts):
+    result = hf_client.feature_extraction(
+        texts,
+        model="sentence-transformers/all-MiniLM-L6-v2"
+    )
+    return result.tolist()
 
 # ── Connect to ChromaDB ───────────────────────────────────────────────────────
 client = chromadb.PersistentClient(path="./chroma_db")
@@ -12,14 +24,14 @@ client = chromadb.PersistentClient(path="./chroma_db")
 # ── Configure Gemini (new SDK) ────────────────────────────────────────────────
 
 
-GROQ_API_KEY = os.environ.get("GROQ_API_KEY", "")
+GROQ_API_KEY = os.environ.get("GROQ_API_KEY")
 groq_client = Groq(api_key=GROQ_API_KEY)
 
 # ── Main query function ───────────────────────────────────────────────────────
 def query_knowledge_base(question):
     collection = client.get_or_create_collection(name="knowledge_base")
     # Step 1: Convert the question to a vector
-    question_vector = model.encode([question]).tolist()
+    question_vector = get_embeddings([question])
 
     # Step 2: Search ChromaDB for the 5 most similar chunks
     results = collection.query(
