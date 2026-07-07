@@ -5,7 +5,12 @@ from ingest import ingest_document, client
 from query import query_knowledge_base
 
 # Serve React frontend from Flask
-app = Flask(__name__, static_folder='../frontend/build', static_url_path='')
+import os
+
+# Get absolute path to frontend build folder
+FRONTEND_BUILD = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'frontend', 'build'))
+
+app = Flask(__name__, static_folder=FRONTEND_BUILD, static_url_path='')
 CORS(app, resources={r"/*": {"origins": "*"}})
 
 UPLOAD_FOLDER = "./uploads"
