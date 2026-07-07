@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 
-const API = "http://localhost:5000";
+const API = "https://contextbot-backend.onrender.com";
 
 function TypingDots() {
   return (
