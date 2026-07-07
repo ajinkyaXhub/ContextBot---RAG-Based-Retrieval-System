@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 
-const API = "https://contextbot-backend.onrender.com";
+const API = "https://contextbot-rag-based-retrieval-system.onrender.com";
+
 
 function TypingDots() {
   return (
