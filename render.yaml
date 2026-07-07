@@ -3,7 +3,7 @@ services:
     name: contextbot
     runtime: python
     rootDir: backend
-    buildCommand: cd ../frontend && npm install && npm run build && cd ../backend && pip install -r requirements.txt
+    buildCommand: pip install -r requirements.txt
     startCommand: gunicorn app:app
     envVars:
       - key: GROQ_API_KEY
