@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 
-const API = "http://localhost:5000";
+const API = "";
+
 
 function TypingDots() {
   return (
@@ -56,7 +57,7 @@ export default function App() {
     formData.append("file", file);
 
     try {
-      const res = await fetch(`${API}/upload`, { method: "POST", body: formData });
+      const res = await fetch(`${API}/api/upload`, { method: "POST", body: formData });
       const data = await res.json();
       setUploadedFiles((prev) => [...prev, data.filename]);
       setMessages((prev) => [
@@ -85,7 +86,7 @@ export default function App() {
     setLoading(true);
 
     try {
-      const res = await fetch(`${API}/ask`, {
+      const res = await fetch(`${API}/api/ask`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ question: q }),
