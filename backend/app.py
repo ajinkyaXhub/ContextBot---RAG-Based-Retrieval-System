@@ -11,7 +11,18 @@ CORS(app)  # Allows React (running on port 3000) to talk to Flask (port 5000)
 UPLOAD_FOLDER = "./uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-
+@app.route("/", methods=["GET"])
+def home():
+    return jsonify({
+        "message": "ContextBot Backend is running",
+        "endpoints": {
+            "upload": "POST /upload",
+            "ask": "POST /ask",
+            "files": "GET /files",
+            "health": "GET /health",
+            "reset": "POST /reset"
+        }
+    })
 # ── Route 1: Upload a document ────────────────────────────────────────────────
 # React sends a file here → we save it → we ingest it into ChromaDB
 @app.route("/upload", methods=["POST"])
