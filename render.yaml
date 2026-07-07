@@ -1,12 +1,12 @@
 services:
   - type: web
-    name: contextbot-backend
+    name: contextbot
     runtime: python
     rootDir: backend
-    buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn app:app --workers 1 --preload --timeout 120
+    buildCommand: cd ../frontend && npm install && npm run build && cd ../backend && pip install -r requirements.txt
+    startCommand: gunicorn app:app
     envVars:
       - key: GROQ_API_KEY
         sync: false
-      - key: PYTHONUNBUFFERED
-        value: "1"
+      - key: HF_API_KEY
+        sync: false

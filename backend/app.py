@@ -3,9 +3,10 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from ingest import ingest_document, client
 from query import query_knowledge_base
-from flask import send_from_directory
+from flask import Flask, request, jsonify, send_from_directory
+import os
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='../frontend/build', static_url_path='/')
 CORS(app)  # Allows React (running on port 3000) to talk to Flask (port 5000)
 
 UPLOAD_FOLDER = "./uploads"
@@ -99,6 +100,13 @@ def get_files():
 def serve_file(filename):
     return send_from_directory(UPLOAD_FOLDER, filename)
 
+@app.route('/')
+def serve():
+    return send_from_directory(app.static_folder, 'index.html')
+
+@app.errorhandler(404)
+def not_found(e):
+    return send_from_directory(app.static_folder, 'index.html')
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)
